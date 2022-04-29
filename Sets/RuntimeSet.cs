@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using sudosilico.Tools.Events;
+using sudosilico.Tools.GameEvents;
 using UnityEngine;
 
 namespace sudosilico.Tools.Sets

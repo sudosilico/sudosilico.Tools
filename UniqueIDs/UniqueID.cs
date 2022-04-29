@@ -30,7 +30,18 @@ namespace sudosilico.Tools
             _guid = new Guid(guidBytes);
             _serializedGuid = guidBytes;
         }
+        
+        public bool IsEmpty()
+        {
+            return _guid == Guid.Empty;
+        }
 
+#if UNITY_EDITOR
+        public byte[] GetBytes() => _serializedGuid;
+#endif
+        
+        public Guid GetGuid() => _guid;
+        
         public static UniqueID Parse(string stringID)
         {
             return new(Guid.Parse(stringID));
@@ -124,16 +135,6 @@ namespace sudosilico.Tools
         public override int GetHashCode()
         {
             return _guid.GetHashCode();
-        }
-
-        public bool IsEmpty()
-        {
-            return _guid == Guid.Empty;
-        }
-
-        public byte[] GetBytes()
-        {
-            return _serializedGuid;
         }
     }
 }
