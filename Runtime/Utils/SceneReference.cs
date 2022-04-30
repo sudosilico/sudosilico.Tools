@@ -29,6 +29,7 @@ namespace sudosilico.Tools
         [SerializeField]
         private bool _sceneEnabled = false;
 
+#if UNITY_EDITOR
         public static SceneReference FromAssetPath(string assetPath)
         {
             var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(assetPath);
@@ -66,6 +67,7 @@ namespace sudosilico.Tools
 
             return sceneReference;
         }
+#endif
         
 #if UNITY_EDITOR
         public string GetSceneAssetPath() => _sceneAssetPath;

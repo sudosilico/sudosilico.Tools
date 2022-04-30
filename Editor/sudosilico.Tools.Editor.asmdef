@@ -1,0 +1,18 @@
+{
+    "name": "sudosilico.Tools.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:46821ef9ca8bdcf4f8f8bdb3f8d26b0c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -4,7 +4,7 @@
         <sudosilico.Tools.Elements.UniqueIDManagerListView focusable="true" name="list-view" style="height: 150px;" />
     </ui:VisualElement>
     <ui:Label text="920a30aa-fc51-43bd-bf22-97f763fe4056" name="selected-id-label" style="margin: 5px; margin-bottom: 0; margin-top: 15px; font-style: bold; -unity-font-style: normal; font-size: 12px; color: rgb(144, 144, 144); -unity-text-align: upper-center;" />
-    <ui:VisualElement style="width: auto; height: auto;">
+    <ui:VisualElement class="unity-inspector-main-container" style="width: auto; height: auto;">
         <ui:ScrollView name="scrollview" style="margin: 5px; border-width: 1px; margin-bottom: 0; border-color: rgb(30, 30, 30);">
             <sudosilico.Tools.Elements.UniqueIDManagerInspectorView name="inspector-view" />
         </ui:ScrollView>

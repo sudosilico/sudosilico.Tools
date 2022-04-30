@@ -2,14 +2,17 @@
 using sudosilico.Tools.GameEvents;
 using UnityEngine;
 
-namespace sudosilico.Tools.Sets
+namespace sudosilico.Tools.RuntimeSets
 {
-    public abstract class RuntimeSet<T> : ScriptableObject
+    public abstract class RuntimeSet : ScriptableObject
+    {
+        [Tooltip("A GameEvent to raise whenever the set is modified.")]
+        public GameEvent OnChange;
+    }
+    
+    public abstract class RuntimeSet<T> : RuntimeSet
     {
         public List<T> Items = new();
-
-        [Tooltip("A GameEvent to raise whenever the set is modified.")]
-        public GameEvent OnSetModified;
         
         public void Add(T item)
         {
@@ -17,9 +20,9 @@ namespace sudosilico.Tools.Sets
             {
                 Items.Add(item);
 
-                if (OnSetModified != null)
+                if (OnChange != null)
                 {
-                    OnSetModified.Raise();
+                    OnChange.Raise();
                 }
             }
         }
@@ -30,9 +33,9 @@ namespace sudosilico.Tools.Sets
             {
                 Items.Remove(item);
                 
-                if (OnSetModified != null)
+                if (OnChange != null)
                 {
-                    OnSetModified.Raise();
+                    OnChange.Raise();
                 }
             }
         }

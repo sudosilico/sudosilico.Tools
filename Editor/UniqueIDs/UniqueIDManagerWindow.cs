@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using sudosilico.Tools.Elements;
 using UnityEditor;
+using UnityEditor.UIElements;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -46,17 +48,80 @@ namespace sudosilico.Tools
             _trackedObjectsLabel = Query<Label>("tracked-objects-label");
             _selectedIDLabel = Query<Label>("selected-id-label");
             _scrollView = Query<ScrollView>("scrollview");
+            _scrollView.AddToClassList("unity-inspector-root-scrollview");
 
-            _inspector.Clear();
-            _inspectorImguiContainer = new IMGUIContainer(InspectorViewOnGUI);
-            _inspector.Add(_inspectorImguiContainer);
+            CreateInspectorInterface();
 
             _list.SetWindow(this);
             _list.UpdateTrackedGameObjects();
 
             UpdateLabels();
         }
-        
+
+        private void CreateInspectorInterface()
+        {
+            _inspector.Clear();
+            
+            var editorsList = new VisualElement();
+            editorsList.AddToClassList("unity-inspector-editors-list");
+
+            if (_componentEditors != null)
+            {
+                foreach (var editor in _componentEditors)
+                {
+                    editorsList.Add(CreateEditorElement(editor));
+                }
+            }
+            
+
+            
+            _inspector.Add(editorsList);
+        }
+
+        private VisualElement CreateEditorElement(Editor editor)
+        {
+            var container = new VisualElement();
+            container.AddToClassList("unity-inspector-element");
+            container.AddToClassList("unity-inspector-element--imgui-custom");
+            container.AddToClassList("unity-inspector-element--imgui");
+            
+            var imgui = new IMGUIContainer(() =>
+            {
+                if (editor != null)
+                {
+                    EditorGUILayout.Space();
+
+                    var isExpanded = InternalEditorUtility.GetIsInspectorExpanded(editor.target); 
+                    
+                    bool willBeExpanded = EditorGUILayout.InspectorTitlebar(isExpanded, editor);
+
+                    if (willBeExpanded != isExpanded)
+                    {
+                        InternalEditorUtility.SetIsInspectorExpanded(editor.target, willBeExpanded); 
+                    }
+                    
+                    if (willBeExpanded)
+                    {
+                        float labelFactor = 0.40f;
+                        EditorGUIUtility.labelWidth = container.localBound.width * labelFactor;
+                        EditorGUIUtility.fieldWidth = container.localBound.width * (1.0f - labelFactor);
+                        
+                        EditorGUI.indentLevel++;
+                        editor.OnInspectorGUI();
+                        EditorGUI.indentLevel--;
+                    }
+                }        
+            });
+            
+            imgui.AddToClassList("unity-imgui-container");
+            imgui.AddToClassList("unity-inspector-element__custom-inspector-container");
+            imgui.AddToClassList("unity-inspector-element__imgui-container");
+
+            container.Add(imgui);
+            
+            return container;
+        }
+
         private void InspectorViewOnGUI()
         {
             if (_currentEditor != null)
@@ -69,11 +134,24 @@ namespace sudosilico.Tools
                 for (int index = 0; index < _componentEditors.Count; index++)
                 {
                     var e = _componentEditors[index];
-
-                    EditorGUILayout.Space();
                     
-                    e.DrawHeader();
-                    e.OnInspectorGUI();
+                    EditorGUILayout.Space();
+
+                    var isExpanded = InternalEditorUtility.GetIsInspectorExpanded(e.target); 
+                    
+                    bool willBeExpanded = EditorGUILayout.InspectorTitlebar(isExpanded, e);
+
+                    if (willBeExpanded != isExpanded)
+                    {
+                        InternalEditorUtility.SetIsInspectorExpanded(e.target, willBeExpanded); 
+                    }
+                    
+                    if (willBeExpanded)
+                    {
+                        EditorGUI.indentLevel++;
+                        e.OnInspectorGUI();
+                        EditorGUI.indentLevel--;
+                    }
                 }
                 
                 EditorGUILayout.Space();
@@ -82,6 +160,7 @@ namespace sudosilico.Tools
 
         private void UpdateLabels()
         {
+            // TODO: Fix NullReferenceException here:
             _trackedObjectsLabel.text = $"{UniqueIDManager.Components.Values.Count} tracked GameObjects";
         }
 
@@ -125,6 +204,8 @@ namespace sudosilico.Tools
             {
                 _componentEditors.Add(Editor.CreateEditor(component));
             }
+            
+            CreateInspectorInterface();
         }
 
         private void OnEnable()

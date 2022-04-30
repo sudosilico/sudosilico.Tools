@@ -25,7 +25,9 @@ namespace sudosilico.Tools
 
         public void OnAfterDeserialize()
         {
+#if UNITY_EDITOR
             _cachedGameObject = null;
+#endif
         }
     }
 }
